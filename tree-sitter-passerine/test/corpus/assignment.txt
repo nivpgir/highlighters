@@ -1,0 +1,17 @@
+==================
+assignment operator
+==================
+
+a = 5
+a = "5"
+
+---
+(source_file
+  (assignment_expression
+    (identifier)
+    (assignment_op)
+    (number_literal))
+  (assignment_expression
+    (identifier)
+    (assignment_op)
+    (string_literal)))
