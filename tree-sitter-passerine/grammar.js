@@ -5,12 +5,15 @@ module.exports = grammar({
     // TODO: add the actual grammar rules
       source_file: $ => repeat($._expression),
 
-      _expression: $ => $.assignment_expression,
+      _expression: $ => choice(
+          $.assignment_expression,
+          $._literal
+      ),
 
       assignment_expression: $ => seq(
           field("left", $.identifier),
           $.assignment_op,
-          field("right", $._literal)
+          field("right", $._expression)
       ),
 
       assignment_op: $ => "=",
