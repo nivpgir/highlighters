@@ -1,0 +1,11 @@
+==================
+lambda expression
+==================
+
+x -> x
+
+---
+(source_file
+  (lambda_expression
+    (pattern (identifier))
+    (identifier)))

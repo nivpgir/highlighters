@@ -5,43 +5,55 @@ module.exports = grammar({
     // TODO: add the actual grammar rules
       source_file: $ => repeat($._expression),
 
-      _expression: $ => choice(
-          $.function_expression,
-          $.assignment_expression,
+      _expression: $ => prec(1, choice(
+      // _expression: $ => choice(
+	  $._grouped_expression,
           $.block_expression,
+          $.lambda_expression,
+          $.assignment_expression,
           $.identifier,
           $._literal
+      )),
+      // ),
+
+      _grouped_expression: $ => seq(
+	  "(",
+	  $._expression,
+	  ")"
       ),
 
-      assignment_expression: $ => seq(
-          field("left", $.identifier),
-          $.assignment_op,
+      pattern: $ => choice(
+	  $.grouped_pattern,
+	  // seq( $.label, $.pattern ),
+	  $.identifier,
+	  $._literal		// DATA
+      ),
+
+      label: $ => $.identifier,
+
+      grouped_pattern: $ => seq(
+	  "(",
+	  $.pattern,
+	  ")"
+      ),
+
+      assignment_expression: $ => prec(2, seq(
+      // assignment_expression: $ => seq(
+          field("left", $.pattern),
+          $._assignment_op,
           field("right", $._expression)
-      ),
+      )),
+      // ),
 
-      function_expression: $ => seq(
-          field("arg_list", $.arg_list),
-          $.function_op,
+      lambda_expression: $ => prec(3, seq(
+      // lambda_expression: $ => seq(
+          field("left", repeat1($.pattern)),
+          $._function_op,
           field("body", $._expression)
-      ),
+      )),
+      // ),
 
-      function_op: $ => "->",
-
-      _grouped_arg_list: $ => seq(
-          "(",
-          $._non_grouped_arg_list,
-          ")"
-      ),
-
-      _non_grouped_arg_list: $ => choice(
-          $.unit,
-          repeat1($.identifier)
-      ),
-
-      arg_list: $ => choice(
-          $._non_grouped_arg_list,
-          $._grouped_arg_list,
-      ),
+      _function_op: $ => "->",
 
       block_expression: $ => seq(
           "{",
@@ -49,7 +61,7 @@ module.exports = grammar({
           "}"
       ),
 
-      assignment_op: $ => "=",
+      _assignment_op: $ => "=",
 
       identifier: $ => /[_a-zA-Z][_0-9a-zA-Z]*/,
 
