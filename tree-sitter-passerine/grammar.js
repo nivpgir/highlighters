@@ -9,7 +9,7 @@ module.exports = grammar({
           $.block_expression,
           $.lambda_expression,
           $.assignment_expression,
-          $.identifier,
+          $.IDENTIFIER,
           $._literal
       )),
 
@@ -22,6 +22,7 @@ module.exports = grammar({
       pattern: $ => choice(
 	  $.grouped_pattern,
 	  $.identifier,
+	  $.IDENTIFIER,
 	  $._literal		// DATA
       ),
 
@@ -35,17 +36,17 @@ module.exports = grammar({
 
       assignment_expression: $ => prec(2, seq(
           field("left", $.pattern),
-          $._assignment_op,
+          $._ASSIGNMENT_OP,
           field("right", $._expression)
       )),
 
       lambda_expression: $ => prec(3, seq(
           field("left", repeat1($.pattern)),
-          $._function_op,
+          $._FUNCTION_OP,
           field("body", $._expression)
       )),
 
-      _function_op: $ => "->",
+      _FUNCTION_OP: $ => "->",
 
       block_expression: $ => seq(
           "{",
@@ -53,20 +54,20 @@ module.exports = grammar({
           "}"
       ),
 
-      _assignment_op: $ => "=",
+      _ASSIGNMENT_OP: $ => "=",
 
-      identifier: $ => /[_a-z][_0-9a-zA-Z]*/,
+      IDENTIFIER: $ => /[_a-z][_0-9a-zA-Z]*/,
 
       _literal: $ => choice(
-          $.number_literal,
-          $.string_literal,
-          $.unit
+          $.NUMBER_LITERAL,
+          $.STRING_LITERAL,
+          $.UNIT
       ),
 
-      number_literal: $ => /\d+/,
+      NUMBER_LITERAL: $ => /\d+/,
 
-      unit: $ => "()",
+      UNIT: $ => "()",
 
-      string_literal: $ => /"[^\"]*"/
+      STRING_LITERAL: $ => /"[^\"]*"/
   }
 });
