@@ -2,11 +2,9 @@ module.exports = grammar({
   name: 'passerine',
 
   rules: {
-    // TODO: add the actual grammar rules
       source_file: $ => repeat($._expression),
 
       _expression: $ => prec(1, choice(
-      // _expression: $ => choice(
 	  $._grouped_expression,
           $.block_expression,
           $.lambda_expression,
@@ -14,7 +12,6 @@ module.exports = grammar({
           $.identifier,
           $._literal
       )),
-      // ),
 
       _grouped_expression: $ => seq(
 	  "(",
@@ -24,12 +21,11 @@ module.exports = grammar({
 
       pattern: $ => choice(
 	  $.grouped_pattern,
-	  // seq( $.label, $.pattern ),
 	  $.identifier,
 	  $._literal		// DATA
       ),
 
-      label: $ => $.identifier,
+      label: $ => /[A-Z][_0-9a-zA-Z]*/,
 
       grouped_pattern: $ => seq(
 	  "(",
@@ -38,20 +34,16 @@ module.exports = grammar({
       ),
 
       assignment_expression: $ => prec(2, seq(
-      // assignment_expression: $ => seq(
           field("left", $.pattern),
           $._assignment_op,
           field("right", $._expression)
       )),
-      // ),
 
       lambda_expression: $ => prec(3, seq(
-      // lambda_expression: $ => seq(
           field("left", repeat1($.pattern)),
           $._function_op,
           field("body", $._expression)
       )),
-      // ),
 
       _function_op: $ => "->",
 
@@ -63,7 +55,7 @@ module.exports = grammar({
 
       _assignment_op: $ => "=",
 
-      identifier: $ => /[_a-zA-Z][_0-9a-zA-Z]*/,
+      identifier: $ => /[_a-z][_0-9a-zA-Z]*/,
 
       _literal: $ => choice(
           $.number_literal,
