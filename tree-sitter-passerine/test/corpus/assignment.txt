@@ -7,8 +7,8 @@ a = "string literal"
 ---
 (source_file
   (assignment_expression
-    (identifier)
+    (pattern (identifier))
     (number_literal))
   (assignment_expression
-    (identifier)
+    (pattern (identifier))
     (string_literal)))
