@@ -21,12 +21,14 @@ module.exports = grammar({
 
       pattern: $ => choice(
 	  $.grouped_pattern,
-	  $.identifier,
+	  $.label_pattern,
 	  $.IDENTIFIER,
 	  $._literal		// DATA
       ),
 
-      label: $ => /[A-Z][_0-9a-zA-Z]*/,
+      label_pattern: $ => seq($.LABEL, $.pattern),
+
+      LABEL: $ => /[A-Z][_0-9a-zA-Z]*/,
 
       grouped_pattern: $ => seq(
 	  "(",
