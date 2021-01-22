@@ -22,6 +22,7 @@ module.exports = grammar({
       pattern: $ => choice(
 	  $.grouped_pattern,
 	  $.label_pattern,
+	  $.DISCARD,
 	  $.IDENTIFIER,
 	  $._literal		// DATA
       ),
@@ -70,6 +71,8 @@ module.exports = grammar({
 
       UNIT: $ => "()",
 
-      STRING_LITERAL: $ => /"[^\"]*"/
+      STRING_LITERAL: $ => /"[^\"]*"/,
+
+      DISCARD: $ => "_"
   }
 });
