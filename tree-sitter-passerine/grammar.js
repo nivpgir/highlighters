@@ -2,31 +2,42 @@ module.exports = grammar({
   name: 'passerine',
 
   rules: {
-      source_file: $ => $.block,
+      source_file: $ => $.body,
       // source_file: $ => repeat($._expression),
 
-      block: $ => seq(
+      body: $ => seq(
 	  repeat1(seq(
 	      $._expression,
 	      $._SEP)),
 	  optional($._expression)
       ),
 
-      _SEP: $ => /\n/,
+      _SEP: $ => /[\n;]/,
 
       _expression: $ => prec(1, choice(
-	  $._grouped_expression,
-          $.block_expression,
-          $.lambda_expression,
-          $.assignment_expression,
-          $.IDENTIFIER,
-          $._literal
+	  seq("(", $._expression, "("),  // $._grouped_expression,
+          seq("{", $.body, "}"),  // $.block_expression,
+	  // macro goes here
+	  $.operator_expression
       )),
 
-      _grouped_expression: $ => seq(
-	  "(",
-	  $._expression,
-	  ")"
+      operator_expression: $ => choice(
+          $.assignment_expression,
+          $.lambda_expression,
+	  // other operators
+	  $.lambda_application_expression
+      ),
+
+      lambda_application_expression: $ => prec(4, choice(
+	  repeat1($._expression),
+	  $.label_lambda_application,
+          $.IDENTIFIER,
+          $._data
+      )),
+
+      label_lambda_application: $ => seq(
+	  $.LABEL,
+	  repeat1($._expression)
       ),
 
       pattern: $ => choice(
@@ -34,7 +45,7 @@ module.exports = grammar({
 	  $.label_pattern,
 	  $.DISCARD,
 	  $.IDENTIFIER,
-	  $._literal		// DATA
+	  $._data
       ),
 
       label_pattern: $ => seq($.LABEL, $.pattern),
@@ -61,17 +72,11 @@ module.exports = grammar({
 
       _FUNCTION_OP: $ => "->",
 
-      block_expression: $ => seq(
-          "{",
-          repeat($._expression),
-          "}"
-      ),
-
       _ASSIGNMENT_OP: $ => "=",
 
       IDENTIFIER: $ => /[_a-z][_0-9a-zA-Z]*/,
 
-      _literal: $ => choice(
+      _data: $ => choice(
           $.NUMBER_LITERAL,
           $.STRING_LITERAL,
           $.UNIT
