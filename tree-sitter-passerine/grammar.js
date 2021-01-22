@@ -2,7 +2,17 @@ module.exports = grammar({
   name: 'passerine',
 
   rules: {
-      source_file: $ => repeat($._expression),
+      source_file: $ => $.block,
+      // source_file: $ => repeat($._expression),
+
+      block: $ => seq(
+	  repeat1(seq(
+	      $._expression,
+	      $._SEP)),
+	  optional($._expression)
+      ),
+
+      _SEP: $ => /\n/,
 
       _expression: $ => prec(1, choice(
 	  $._grouped_expression,
