@@ -1,0 +1,28 @@
+{
+  "name": "tree-sitter-passerine",
+  "version": "0.0.1",
+  "description": "a tree-sitter parser for the passerine language `https://github.com/vrtbl/passerine`",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vrtbl/highlighters.git"
+  },
+  "keywords": [
+    "passerine",
+    "tree-sitter"
+  ],
+  "author": "Niv Pagir",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vrtbl/highlighters/issues"
+  },
+  "homepage": "https://github.com/vrtbl/highlighters#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "nan": "^2.14.2",
+    "tree-sitter-cli": "^0.17.3"
+  }
+}
