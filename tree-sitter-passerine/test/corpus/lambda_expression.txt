@@ -5,7 +5,9 @@ lambda expression
 x -> x
 
 ---
-(source_file (block
-  (lambda_expression
-    (pattern (IDENTIFIER))
-    (IDENTIFIER))))
+(source_file
+  (func
+    (pattern
+      (IDENTIFIER))
+    (pattern
+      (IDENTIFIER))))

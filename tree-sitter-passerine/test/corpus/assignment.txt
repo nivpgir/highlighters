@@ -5,10 +5,12 @@ assignment operator
 a = 5
 a = "string literal"
 ---
-(source_file (block
-  (assignment_expression
-    (pattern (IDENTIFIER))
+(source_file
+  (assignment
+    (pattern
+      (IDENTIFIER))
     (NUMBER_LITERAL))
-  (assignment_expression
-    (pattern (IDENTIFIER))
-    (STRING_LITERAL))))
+  (assignment
+    (pattern
+      (IDENTIFIER))
+    (STRING_LITERAL)))

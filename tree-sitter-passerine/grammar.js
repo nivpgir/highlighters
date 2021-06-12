@@ -2,42 +2,134 @@ module.exports = grammar({
   name: 'passerine',
 
   rules: {
-      source_file: $ => $.body,
+      source_file: $ => $._body,
       // source_file: $ => repeat($._expression),
 
-      body: $ => seq(
-	  repeat1(seq(
-	      $._expression,
-	      $._SEP)),
-	  optional($._expression)
+      _body: $ => seq(
+	  repeat(seq($._expression, $._SEP)),
+	  $._expression, optional($._SEP)
       ),
 
       _SEP: $ => /[\n;]/,
 
-      _expression: $ => prec(1, choice(
-	  seq("(", $._expression, "("),  // $._grouped_expression,
-          seq("{", $.body, "}"),  // $.block_expression,
-	  // macro goes here
-	  $.operator_expression
-      )),
-
-      operator_expression: $ => choice(
-          $.assignment_expression,
-          $.lambda_expression,
-	  // other operators
-	  $.lambda_application_expression
+      _expression: $ => choice(
+	  $._prefix_expression,
+	  $._infix_expression
       ),
 
-      lambda_application_expression: $ => prec(4, choice(
-	  repeat1($._expression),
-	  $.label_lambda_application,
-          $.IDENTIFIER,
-          $._data
+      _prefix_expression: $ => prec(8, choice(
+	  // $.syntax,
+	  $.grouping,
+	  $.block,
+	  // $.symbol,
+	  // $.magic,
+	  $.pattern,
+	  // $.keyword,
+	  $._data,
+	  $.form
       )),
 
-      label_lambda_application: $ => seq(
-	  $.LABEL,
-	  repeat1($._expression)
+      form: $ => repeat1(
+	  $._prefix_expression
+      ),
+
+      _infix_expression: $ => choice(
+	  prec(1, $.assignment),
+	  prec(2, $.pair),
+	  prec(3, $.func),
+	  prec(4, $.equality),
+	  prec(4, $.greater_equal),
+	  prec(4, $.greater),
+	  prec(4, $.lesser_equal),
+	  prec(4, $.lesser),
+	  prec(5, $.addition),
+	  prec(5, $.subtraction),
+	  prec(6, $.multiplication),
+	  prec(6, $.division),
+	  prec(6, $.remainder),
+	  prec(7, $.compose),
+      ),
+
+      grouping: $ => seq(
+	  "(", $._expression, ")"
+      ),
+
+      block: $ => seq(
+	  "{",
+	  repeat(seq($._expression, $._SEP)),
+	  $._expression,
+	  "}"
+      ),
+
+      assignment: $ => seq(
+	  $._prefix_expression,
+	  $._OP_ASSIGN,
+	  $._expression
+      ),
+      pair: $ => seq(
+	  $._prefix_expression,
+	  $._OP_PAIR,
+	  $._expression
+      ),
+      func: $ => seq(
+	  $._prefix_expression,
+	  $._OP_FUNCTION,
+	  $._expression
+      ),
+      equality: $ => seq(
+	  $._prefix_expression,
+	  $._OP_EQUAL,
+	  $._expression
+      ),
+      greater_equal: $ => seq(
+	  $._prefix_expression,
+	  $._OP_GEQ,
+	  $._expression
+      ),
+      greater: $ => seq(
+	  $._prefix_expression,
+	  $._OP_GREATER,
+	  $._expression
+      ),
+      lesser_equal: $ => seq(
+	  $._prefix_expression,
+	  $._OP_LEQ,
+	  $._expression
+      ),
+      lesser: $ => seq(
+	  $._prefix_expression,
+	  $._OP_LESSER,
+	  $._expression
+      ),
+      addition: $ => seq(
+	  $._prefix_expression,
+	  $._OP_ADD,
+	  $._expression
+      ),
+      subtraction: $ => seq(
+	  $._prefix_expression,
+	  $._OP_SUB,
+	  $._expression
+      ),
+      multiplication: $ => seq(
+	  $._prefix_expression,
+	  $._OP_MUL,
+	  $._expression
+      ),
+      division: $ => seq(
+	  $._prefix_expression,
+	  $._OP_DIV,
+	  $._expression
+      ),
+      remainder: $ => seq(
+	  $._prefix_expression,
+	  $._OP_REM,
+	  $._expression
+      ),
+      compose: $ => seq(
+	  $._prefix_expression,
+	  $._OP_COMPOSE,
+	  $._expression
       ),
 
       pattern: $ => choice(
@@ -58,21 +150,20 @@ module.exports = grammar({
 	  ")"
       ),
 
-      assignment_expression: $ => prec(2, seq(
-          field("left", $.pattern),
-          $._ASSIGNMENT_OP,
-          field("right", $._expression)
-      )),
-
-      lambda_expression: $ => prec(3, seq(
-          field("left", repeat1($.pattern)),
-          $._FUNCTION_OP,
-          field("body", $._expression)
-      )),
-
-      _FUNCTION_OP: $ => "->",
-
-      _ASSIGNMENT_OP: $ => "=",
+      _OP_ASSIGN: $ => "=",
+      _OP_PAIR: $ => ",",
+      _OP_FUNCTION: $ => "->",
+      _OP_EQUAL: $ => "==",
+      _OP_GEQ: $ => "<=",
+      _OP_GREATER: $ => "<",
+      _OP_LEQ: $ => ">=",
+      _OP_LESSER: $ => ">",
+      _OP_ADD: $ => "+",
+      _OP_SUB: $ => "-",
+      _OP_MUL: $ => "*",
+      _OP_DIV: $ => "/",
+      _OP_REM: $ => "%",
+      _OP_COMPOSE: $ => ".",
 
       IDENTIFIER: $ => /[_a-z][_0-9a-zA-Z]*/,
 
